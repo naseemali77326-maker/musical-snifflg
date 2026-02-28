@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الإجازات المرضية - منصة صحة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --seha-blue: #3d7fb8; --seha-dark: #2c5d8a; }
+        body { margin: 0; font-family: 'Cairo', sans-serif; background-color: #fff; direction: rtl; }
+
+        /* الهيدر العلوي */
+        header { padding: 10px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f0f0f0; background: #fff; }
+        .btn-login-top { background: #3d7fb8; color: #fff; padding: 6px 18px; border-radius: 4px; text-decoration: none; font-size: 11px; font-weight: 600; order: 1; }
+        .nav-links { display: flex; gap: 15px; font-size: 11px; color: #666; font-weight: 600; order: 2; }
+        .logo-img { height: 35px; order: 3; cursor: pointer; }
+
+        /* منطقة المحتوى */
+        .container { text-align: center; padding: 50px 20px; min-height: 400px; }
+        .main-title { color: #3d7fb8; font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+        .sub-title { color: #8c8c8c; font-size: 12px; margin-bottom: 30px; line-height: 1.6; max-width: 650px; margin: 0 auto; }
+
+        /* حقول الإدخال */
+        .input-group { max-width: 380px; margin: 0 auto; }
+        .seha-input { width: 100%; padding: 11px; margin-bottom: 12px; border: 1px solid #e1e1e1; border-radius: 4px; text-align: center; font-family: 'Cairo'; font-size: 13px; box-sizing: border-box; }
+        .btn-search { background-color: #3d7fb8; color: white; border: none; padding: 8px 35px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600; margin-bottom: 10px; }
+        .btn-back { background-color: #2c5d8a; color: white; border: none; padding: 8px 25px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600; }
+
+        /* جدول النتائج المطابق */
+        #resultCard { display: none; max-width: 550px; margin: 20px auto; background: #f9f9f9; border: 1px solid #eee; padding: 25px; text-align: right; border-radius: 8px; }
+        .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; font-size: 13px; color: #333; }
+        .report-item { margin-bottom: 15px; border-bottom: 1px solid #f0f0f0; padding-bottom: 5px; }
+        .label { color: #222; font-weight: 700; display: block; margin-bottom: 4px; }
+        .value { color: #555; font-weight: 400; }
+
+        /* الفوتر الأزرق */
+        footer { background: #3d7fb8; color: white; padding: 40px 8%; margin-top: 60px; display: grid; grid-template-columns: 1fr 1fr 1.5fr; gap: 40px; text-align: right; }
+        footer h4 { font-size: 15px; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.2); display: inline-block; padding-bottom: 5px; }
+        footer p, footer li { font-size: 12px; opacity: 0.9; line-height: 2.2; list-style: none; margin: 0; }
+        .footer-logo-box { text-align: left; }
+        .footer-logo-box img { height: 45px; filter: brightness(0) invert(1); margin-bottom: 15px; }
+
+        .footer-bottom { background: #3d7fb8; padding: 20px 8%; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; color: white; font-size: 11px; }
+        .partner-icons img { height: 35px; filter: brightness(0) invert(1); margin-right: 15px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="#" class="btn-login-top">تسجيل الدخول</a>
+    <div class="nav-links">
+        <span>الرئيسية</span><span>الخدمات</span><span>الاستعلامات</span><span>الأسئلة الشائعة</span><span>تواصل معنا</span><span>إنشاء حساب</span>
+    </div>
+    <img src="https://www.seha.sa/Content/images/logo.png" class="logo-img" onclick="openAdmin()">
+</header>
+
+<div class="container">
+    <h1 class="main-title">الإجازات المرضية</h1>
+    <p class="sub-title">خدمة الاستعلام عن الإجازات المرضية تتيح لك الاستعلام عن حالة طلبك للإجازة ويمكنك طباعتها عن طريق تطبيق صحتي</p>
+
+    <div id="searchBox" class="input-group">
+        <input type="text" id="q_code" class="seha-input" placeholder="رمز الخدمة">
+        <input type="text" id="q_id" class="seha-input" placeholder="رقم الهوية / الإقامة">
+        <button class="btn-search" onclick="searchReport()">استعلام</button>
+        <br>
+        <button class="btn-back">رجوع للاستعلامات</button>
+    </div>
+
+    <div id="resultCard">
+        <div class="report-grid">
+            <div class="report-item"><span class="label">الاسم:</span><span class="value" id="v_name"></span></div>
+            <div class="report-item"><span class="label">تاريخ إصدار التقرير:</span><span class="value" id="v_issue"></span></div>
+            <div class="report-item"><span class="label">تبدأ من:</span><span class="value" id="v_start"></span></div>
+            <div class="report-item"><span class="label">وحتى:</span><span class="value" id="v_end"></span></div>
+            <div class="report-item"><span class="label">المدة بالأيام:</span><span class="value" id="v_days"></span></div>
+            <div class="report-item"><span class="label">اسم الطبيب:</span><span class="value" id="v_doc"></span></div>
+            <div class="report-item"><span class="label">المسمى الوظيفي:</span><span class="value">طبيب عام</span></div>
+        </div>
+        <div style="margin-top: 20px;">
+            <button class="btn-search" style="max-width: 100%;" onclick="resetSearch()">استعلام جديد</button>
+            <button class="btn-back" style="max-width: 100%;" onclick="resetSearch()">رجوع للاستعلامات</button>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div>
+        <h4>تواصل معنا</h4>
+        <p>920546005</p>
+        <p>support@sehea.sa</p>
+        <p>9200232005</p>
+        <p>أوقات العمل: الأحد حتى الخميس 8 ص - 11م</p>
+    </div>
+    <div>
+        <h4>القائمة الرئيسية</h4>
+        <ul style="padding:0;">
+            <li>الخدمات</li><li>الاستعلامات</li><li>الأسئلة الشائعة</li><li>تواصل معنا</li>
+        </ul>
+    </div>
+    <div class="footer-logo-box">
+        <img src="https://www.seha.sa/Content/images/logo.png">
+        <p>منصة تخدم جميع المنشآت من خلال تقديم الخدمات إلكترونياً لجميع المنشآت وتسعى إلى توحيد وأتمتة الإجراءات والخدمات بما في دوره رفع جودة الأداء وخفض التكاليف.</p>
+    </div>
+</footer>
+
+<div class="footer-bottom">
+    <div class="partner-icons">
+        <img src="https://upload.wikimedia.org/wikipedia/ar/thumb/0/05/Logo_of_the_Ministry_of_Health_of_Saudi_Arabia.svg/1024px-Logo_of_the_Ministry_of_Health_of_Saudi_Arabia.svg.png">
+        <img src="https://lean.sa/wp-content/uploads/2021/03/lean-logo-white.png">
+    </div>
+    <p>سياسة الخصوصية وشروط الاستخدام | دليل الاستخدام</p>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDq9-oXYiLMQWo3uXHanJP4...", 
+      projectId: "myseha-3849a",
+      appId: "1:299404192977:web:e1f98b92c..."
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // لوحة المدخلات المخفية
+    window.openAdmin = function() {
+        let p = prompt("أدخل رمز الوصول:");
+        if(p === "1234") {
+            let n = prompt("الاسم:");
+            let d = prompt("اسم الطبيب:");
+            let i = prompt("رقم الهوية:");
+            let c = prompt("رمز الخدمة:");
+            let days = prompt("عدد الأيام:");
+            let s = prompt("تاريخ البداية (YYYY-MM-DD):");
+            if(n && i && c) {
+                addDoc(collection(db, "reports"), {name:n, doc:d, id:i, code:c, days:days, start:s});
+                alert("تم الحفظ بنجاح!");
+            }
+        }
+    }
+
+    window.searchReport = async function() {
+        const code = document.getElementById('q_code').value;
+        const id = document.getElementById('q_id').value;
+        
+        const q = query(collection(db, "reports"), where("code", "==", code), where("id", "==", id));
+        const res = await getDocs(q);
+
+        if (!res.empty) {
+            document.getElementById('searchBox').style.display = 'none';
+            const data = res.docs[0].data();
+            document.getElementById('v_name').innerText = data.name;
+            document.getElementById('v_doc').innerText = data.doc;
+            document.getElementById('v_days').innerText = data.days;
+            document.getElementById('v_start').innerText = data.start;
+            document.getElementById('v_issue').innerText = data.start;
+            document.getElementById('v_end').innerText = data.start; // يمكن حساب النهاية برمجياً
+            document.getElementById('resultCard').style.display = 'block';
+        } else {
+            alert("لا يوجد تقرير مطابق للبيانات المدخلة");
+        }
+    }
+
+    window.resetSearch = function() {
+        document.getElementById('resultCard').style.display = 'none';
+        document.getElementById('searchBox').style.display = 'block';
+    }
+</script>
+</body>
+</html>
